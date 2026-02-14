@@ -15,8 +15,10 @@ export default function Home() {
   const [geoData, setGeoData] = useState(null);
   const [searchParams, setSearchParams] = useState("");
 
+  // 1. The API Call lives here in the parent
   const fetchIpData = async () => {
     try {
+      // Calling the Next.js API route we built earlier
       const res = await fetch(`/api/geo?searchParams=${searchParams}`);
       const data = await res.json();
       setGeoData(data);
@@ -25,20 +27,22 @@ export default function Home() {
     }
   };
 
+  // 2. Fetch the user's own IP when the page first loads
   useEffect(() => {
     fetchIpData(); 
   }, [searchParams]);
 
+  // 3. Handle the search form submission
+  
+
   return (
     <SearchContext.Provider value={{ searchParams, setSearchParams }}>
-    <div className="h-screen flex items-start justify-center">
-      <div className=" flex flex-col w-full h-full min-w-[365px] max-w-[1920px] ">
+      <div className="flex flex-col h-screen w-full relative">
         <Header geoData={geoData} />
         <div className="flex-1 w-full relative z-0">
-          <MapComponent lat={geoData?.lat} lon={geoData?.lon} location={geoData?.city + ", " + geoData?.region} />
+          <MapComponent lat={geoData?.lat} lon={geoData?.lon} />
         </div>
       </div>
-    </div>
     </SearchContext.Provider>
   );
 }
@@ -46,11 +50,13 @@ export default function Home() {
 
 function Header({ geoData }) {
   return (
-    <header className="relative z-50 bg-[url('/images/pattern-bg-mobile.png')] md:bg-[url('/images/pattern-bg-desktop.png')] bg-no-repeat bg-cover pb-36">
-      <div className="flex flex-col justify-between items-center gap-6 pb-20 md:pb-0 mt-[-20px] md:mt-0 md:pt-3">
-        <div className="relative top-12 md:top-5 text-2xl md:text-3xl font-bold text-white ">IP Address Tracker</div>
-        <Searchbar />
-        <InfoCard geoData={geoData} />
+    <header className="relative z-50 bg-[url('/images/pattern-bg-mobile.png')] md:bg-[url('/images/pattern-bg-desktop.png')] bg-no-repeat bg-cover pb-32">
+      <div className="mx-auto max-w-7xl px-4 pt-8 w-full">
+        <div className="flex flex-col justify-between items-center gap-6">
+          <div className="text-2xl font-bold text-white">IP Address Tracker</div>
+          <Searchbar />
+          <InfoCard geoData={geoData} />
+        </div>
       </div>
     </header>
   );
@@ -62,11 +68,12 @@ function Searchbar() {
 
   const handleSearch = (e) => {
     e.preventDefault();
+    console.log("This is inside handleSearch",e)
     setSearchParams(e.target[0].value);
   };
   return (
-    <form onSubmit={handleSearch} className="relative top-12 md:top-6 flex md:w-[35%] max-w-xl">
-      <input className="w-full rounded-l-xl p-3 pl-5 bg-white placeholder:text-gray-light placeholder:text-sm placeholder:md:text-base" type="text" placeholder="Search for any IP address or domain" />
+    <form onSubmit={handleSearch} className="flex ">
+      <input className="rounded-l-xl p-2 bg-white" type="text" placeholder="Search..." />
       <button className="flex items-center justify-center rounded-r-xl p-4 bg-black" type="submit">
         <img src="/images/icon-arrow.svg" alt="Search" className="w-fit h-fit" />
       </button>
@@ -83,12 +90,12 @@ function InfoCard({ geoData }) {
   ];
 
   return (
-    <div className="absolute top-42 md:top-46 w-[85%] md:w-[80%] bg-white rounded-xl shadow-xl p-6 md:p-8">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-2 md:gap-8 text-center md:text-left md:divide-y-0 md:divide-x md:divide-gray-200">
+    <div className="absolute -bottom-16 left-1/2 -translate-x-1/2 w-[90%] max-w-4xl bg-white rounded-xl shadow-xl p-6 md:p-8">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-8 text-center md:text-left divide-y md:divide-y-0 md:divide-x divide-gray-200">
         {infoItems.map((item, index) => (
-          <div key={index} className="px-4 pt-2 md:pt-0">
-            <h2 className="text-[10px] md:text-xs font-rubik-bold font-bold text-gray-light tracking-widest mb-2">{item.label}</h2>
-            <p className="text-base md:text-2xl font-rubik-bold font-bold text-gray-dark break-words">{item.value}</p>
+          <div key={index} className="px-4 pt-4 md:pt-0">
+            <h2 className="text-xs font-bold text-gray-500 tracking-wider mb-2">{item.label}</h2>
+            <p className="text-xl md:text-2xl font-bold text-gray-800 break-words">{item.value}</p>
           </div>
         ))}
       </div>
