@@ -83,7 +83,7 @@ function InfoCard({ geoData }) {
   ];
 
   return (
-    <div className="absolute top-42 md:top-46 w-[85%] md:w-[80%] bg-white rounded-xl shadow-xl p-6 md:p-8">
+    <div className="absolute top-38 md:top-46 w-[85%] md:w-[80%] bg-white rounded-xl shadow-xl p-6 md:p-8">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-2 md:gap-8 text-center md:text-left md:divide-y-0 md:divide-x md:divide-gray-200">
         {infoItems.map((item, index) => (
           <div key={index} className="px-4 pt-2 md:pt-0">
